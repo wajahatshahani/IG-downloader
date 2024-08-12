@@ -1,0 +1,4 @@
+streamlit
+pip install streamlit
+instaloader
+pip install instaloader
