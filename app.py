@@ -50,8 +50,9 @@ if st.button("Download Reel"):
         # Uncomment and fill in your credentials if necessary
         # loader.login('your_username', 'your_password')
 
-        # Retry logic
-        max_retries = 3
+        max_retries = 5
+        delay = 60  # Initial delay in seconds
+
         for attempt in range(max_retries):
             try:
                 post = Post.from_shortcode(loader.context, url.split("/")[-2])
@@ -60,8 +61,9 @@ if st.button("Download Reel"):
                 break  # Exit retry loop if successful
             except Exception as e:
                 if attempt < max_retries - 1:
-                    st.warning(f"Retrying... Attempt {attempt + 1}")
-                    time.sleep(10)  # Wait before retrying
+                    st.warning(f"Retrying in {delay} seconds... Attempt {attempt + 1}")
+                    time.sleep(delay)  # Wait before retrying
+                    delay *= 2  # Exponential backoff: Increase delay each retry
                 else:
                     st.error(f"Oops! Something went wrong: {e}")
     else:
