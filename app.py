@@ -63,4 +63,3 @@ if st.button("Submit Feedback"):
         st.success("Thank you for your feedback!")
     else:
         st.warning("Please provide feedback; it will help us improve this project.")
-st.write("Email: wajahatdslearning@gmail.com")
