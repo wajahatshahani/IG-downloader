@@ -2,6 +2,11 @@ import streamlit as st
 from instaloader import Instaloader, Post
 import base64
 import time
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load and encode the background image
 image_path = "bg.png"
@@ -46,26 +51,26 @@ if st.button("Download Reel"):
     if url:
         loader = Instaloader()
 
-        # Optional login step
-        # Uncomment and fill in your credentials if necessary
-        # loader.login('your_username', 'your_password')
-
         max_retries = 5
         delay = 60  # Initial delay in seconds
 
         for attempt in range(max_retries):
             try:
+                logger.info(f"Attempt {attempt + 1}: Processing URL {url}")
                 post = Post.from_shortcode(loader.context, url.split("/")[-2])
                 loader.download_post(post, target="downloaded_reel")
                 st.success("Downloaded Successfully.")
-                break  # Exit retry loop if successful
+                logger.info("Download successful.")
+                break
             except Exception as e:
+                logger.error(f"Attempt {attempt + 1} failed: {e}")
                 if attempt < max_retries - 1:
                     st.warning(f"Retrying in {delay} seconds... Attempt {attempt + 1}")
-                    time.sleep(delay)  # Wait before retrying
-                    delay *= 2  # Exponential backoff: Increase delay each retry
+                    time.sleep(delay)
+                    delay *= 2
                 else:
                     st.error(f"Oops! Something went wrong: {e}")
+                    logger.error(f"Failed after {max_retries} attempts.")
     else:
         st.warning("Please enter a valid Instagram Reel URL above.")
 
