@@ -1,7 +1,9 @@
 import streamlit as st
 from instaloader import Instaloader, Post
 import base64
+import time
 
+# Background Image Setup
 image_path = "bg.png"
 with open(image_path, "rb") as img_file:
     bg_image = base64.b64encode(img_file.read()).decode()
@@ -38,12 +40,18 @@ st.markdown(
 
 st.markdown('<h1 class="stTitle">Welcome to the IG Pollar</h1>', unsafe_allow_html=True)
 
+# Input URL
 url = st.text_input("🔗 Paste the Instagram Reel URL here:")
 
 if st.button("Download Reel"):
     if url:
         try:
             loader = Instaloader()
+            username = "your_username"  # Replace with your Instagram username
+            password = "your_password"  # Replace with your Instagram password
+
+            loader.login(username, password)
+            time.sleep(5)  # Adding delay to prevent rate limiting
             post = Post.from_shortcode(loader.context, url.split("/")[-2])
             loader.download_post(post, target="downloaded_reel")
             st.success("Downloaded Successfully.")
@@ -52,6 +60,7 @@ if st.button("Download Reel"):
     else:
         st.warning("Please enter a valid Instagram Reel URL above.")
 
+# Feedback Section
 st.markdown("""
     ---
     **Feedback?** 
